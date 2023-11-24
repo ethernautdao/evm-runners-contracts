@@ -8,14 +8,13 @@ contract EvmrTest is Test {
     EVMR public evmr;
 
     function setUp() public {
-        evmr = new EVMR();
+        evmr = new EVMR(address(this), address(this));
     }
 
     function testSubmit() public {
         // declare submission struct with random fields
-        EVMR.Submission memory newSubmission = EVMR.Submission(
-            1, 2, "level_name", 3, "user_name", "bytecode", 4, 5, 6, "type", "optimized_for"
-        );
+        EVMR.Submission memory newSubmission =
+            EVMR.Submission(1, 2, "level_name", 3, "user_name", "bytecode", 4, 5, 6, "type", "optimized_for");
 
         // submit struct
         evmr.submit(
