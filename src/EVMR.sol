@@ -6,12 +6,12 @@ import "solady/src/auth/OwnableRoles.sol";
 
 interface IRenderer {
     function render(
-        uint256 tokenId,
         string memory levelName,
-        string memory userName,
         uint256 gas,
         uint256 size,
-        string memory solutionType
+        uint256 solutionType,
+        uint256 optimizedFor,
+        string memory userName
     ) external view returns (string memory);
 }
 
@@ -24,23 +24,20 @@ contract EVMR is ERC721, OwnableRoles {
     IRenderer public renderer;
 
     struct Submission {
-        uint256 id;
-        uint256 level_id;
-        string level_name;
-        uint256 user_id;
+        uint64 id;
+        uint48 level_id;
+        uint32 gas;
+        uint32 size;
+        uint8 solutionType; // 0 solidity, 1 yul, 2 vyper, 3 huff, 4 bytecode
+        uint8 optimized_for; // 0 gas, 1 size
+        uint64 submitted_at;
         string user_name;
-        string bytecode;
-        uint256 gas;
-        uint256 size;
-        uint256 submitted_at;
-        string solutionType;
-        string optimized_for;
     }
 
-    // userAddress => Submission[]
-    mapping(address => Submission[]) public submissionsToUser;
-    // tokenId => Submission
-    mapping(uint256 => Submission) public tokenIdToSubmission;
+    // id => Submission
+    mapping(uint256 => Submission) public idToSubmission;
+    // level_id to level_name
+    mapping(uint256 => string) public levelIdToName;
 
     constructor(address backend, address _renderer) {
         _initializeOwner(msg.sender);
@@ -49,33 +46,23 @@ contract EVMR is ERC721, OwnableRoles {
     }
 
     // Admin functions
-
-    function submit(
-        address user,
-        uint256 id,
-        uint256 level_id,
-        string memory level_name,
-        uint256 user_id,
-        string memory user_name,
-        string memory bytecode,
-        uint256 gas,
-        uint256 size,
-        uint256 submitted_at,
-        string memory type_,
-        string memory optimized_for
-    ) external onlyRolesOrOwner(BACKEND_ROLE) {
-        Submission memory newSubmission = Submission(
-            id, level_id, level_name, user_id, user_name, bytecode, gas, size, submitted_at, type_, optimized_for
-        );
-
-        submissionsToUser[user].push(newSubmission);
-    }
-
     function setRenderer(address _renderer) public onlyOwner {
         renderer = IRenderer(_renderer);
     }
 
-    function mint(address user, uint256 id) external onlyRolesOrOwner(BACKEND_ROLE) {
+    function setLevelName(uint256 level_id, string memory level_name) public onlyRolesOrOwner(BACKEND_ROLE) {
+        levelIdToName[level_id] = level_name;
+    }
+
+    function submit(address user, Submission memory submission) external onlyRolesOrOwner(BACKEND_ROLE) {
+        idToSubmission[uint256(submission.id)] = submission;
+
+        if (user != address(0)) {
+            _mint(user, uint256(submission.id));
+        }
+    }
+
+    function mint(address user, uint256 id) public onlyRolesOrOwner(BACKEND_ROLE) {
         _mint(user, id);
     }
 
@@ -91,21 +78,17 @@ contract EVMR is ERC721, OwnableRoles {
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         // reverts if token does not exist
-        address tokenOwner = ownerOf(tokenId);
+        if (!_exists(tokenId)) revert TokenDoesNotExist();
 
         return (
             renderer.render(
-                tokenId,
-                tokenIdToSubmission[tokenId].level_name,
-                tokenIdToSubmission[tokenId].user_name,
-                tokenIdToSubmission[tokenId].gas,
-                tokenIdToSubmission[tokenId].size,
-                tokenIdToSubmission[tokenId].solutionType
+                levelIdToName[idToSubmission[tokenId].level_id],
+                idToSubmission[tokenId].gas,
+                idToSubmission[tokenId].size,
+                idToSubmission[tokenId].solutionType,
+                idToSubmission[tokenId].optimized_for,
+                idToSubmission[tokenId].user_name
             )
         );
-    }
-
-    function getSubmissionsForUser(address userAddress) public view returns (Submission[] memory) {
-        return submissionsToUser[userAddress];
     }
 }

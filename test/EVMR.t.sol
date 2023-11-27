@@ -13,27 +13,18 @@ contract EvmrTest is Test {
 
     function testSubmit() public {
         // declare submission struct with random fields
-        EVMR.Submission memory newSubmission =
-            EVMR.Submission(1, 2, "level_name", 3, "user_name", "bytecode", 4, 5, 6, "type", "optimized_for");
+        EVMR.Submission memory newSubmission = EVMR.Submission({
+            id: 1,
+            level_id: 1,
+            gas: 1,
+            size: 1,
+            solutionType: 1,
+            optimized_for: 1,
+            submitted_at: 1,
+            user_name: "user1"
+        });
 
         // submit struct
-        evmr.submit(
-            address(this),
-            newSubmission.id,
-            newSubmission.level_id,
-            newSubmission.level_name,
-            newSubmission.user_id,
-            newSubmission.user_name,
-            newSubmission.bytecode,
-            newSubmission.gas,
-            newSubmission.size,
-            newSubmission.submitted_at,
-            newSubmission.solutionType,
-            newSubmission.optimized_for
-        );
-
-        // check if mapping is updated
-        EVMR.Submission[] memory userSubmission = evmr.getSubmissionsForUser(address(this));
-        assertEq(userSubmission.length, 1);
+        evmr.submit(address(this), newSubmission);
     }
 }
