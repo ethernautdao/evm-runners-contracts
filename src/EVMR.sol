@@ -50,6 +50,10 @@ contract EVMR is ERC721, OwnableRoles {
         renderer = IRenderer(_renderer);
     }
 
+    function updateBackend(address backend) public onlyOwner {
+        _updateRoles(backend, BACKEND_ROLE, true);
+    }
+
     function setLevelName(uint256 level_id, string memory level_name) public onlyRolesOrOwner(BACKEND_ROLE) {
         levelIdToName[level_id] = level_name;
     }

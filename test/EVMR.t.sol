@@ -7,8 +7,10 @@ import {EVMR} from "../src/EVMR.sol";
 contract EvmrTest is Test {
     EVMR public evmr;
 
+    address backend = makeAddr("backend");
+
     function setUp() public {
-        evmr = new EVMR(address(this), address(this));
+        evmr = new EVMR(backend, address(this));
     }
 
     function testSubmit() public {
@@ -25,6 +27,7 @@ contract EvmrTest is Test {
         });
 
         // submit struct
+        vm.prank(backend);
         evmr.submit(address(this), newSubmission);
     }
 }
