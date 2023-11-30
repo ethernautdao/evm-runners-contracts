@@ -18,8 +18,23 @@ contract EvmrTest is Test {
         EVMR.Submission memory newSubmission = EVMR.Submission({
             id: 1,
             level_id: 1,
-            gas: 1,
-            size: 1,
+            gas: 100,
+            size: 50,
+            solutionType: 1,
+            optimized_for: 1,
+            submitted_at: 1,
+            user_name: "user1"
+        });
+
+        // submit struct
+        vm.prank(backend);
+        evmr.submit(address(this), newSubmission);
+
+        newSubmission = EVMR.Submission({
+            id: 1,
+            level_id: 1,
+            gas: 50,
+            size: 50,
             solutionType: 1,
             optimized_for: 1,
             submitted_at: 1,

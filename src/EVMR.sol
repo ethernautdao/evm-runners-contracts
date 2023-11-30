@@ -61,7 +61,8 @@ contract EVMR is ERC721, OwnableRoles {
     function submit(address user, Submission memory submission) external onlyRolesOrOwner(BACKEND_ROLE) {
         idToSubmission[uint256(submission.id)] = submission;
 
-        if (user != address(0)) {
+        // if user is not 0x0 and token id does not already exist, mint token
+        if (user != address(0) && !_exists(uint256(submission.id))) {
             _mint(user, uint256(submission.id));
         }
     }
