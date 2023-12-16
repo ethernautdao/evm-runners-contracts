@@ -21,7 +21,7 @@ contract EVMRender {
                 bytes(
                     abi.encodePacked(
                         '<?xml version="1.0" encoding="UTF-8"?>',
-                        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 3500"><style>.logo { fill: white; font-family: mono; font-size: 8px; } .base { fill: white; font-family: mono; font-size: 8px; background: white }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="logo">',
+                        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.logo { fill: white; font-family: mono; font-size: 8px; } .base { fill: white; font-family: mono; font-size: 8px; background: white }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="logo">',
                         "&#8203; &#8203; _____&#8203; &#8203; &#8203; ___&#8203; __&#8203; ___&#8203; &#8203; &#8203; &#8203; &#8203; &#8203; &#8203; &#8203; _&#8203; __&#8203; _&#8203; &#8203; &#8203; _&#8203; _&#8203; __&#8203; &#8203; _&#8203; __&#8203; &#8203; &#8203; ___&#8203; _&#8203; __&#8203; ___&#8203;",
                         '</text><text x="10" y="30" class="logo">',
                         "&#8203; /&#8203; _&#8203; \\&#8203; \\&#8203; /&#8203; /&#8203; '_&#8203; '&#8203; _&#8203; \\&#8203; _____|&#8203; '__|&#8203; |&#8203; |&#8203; |&#8203; '_&#8203; \\|&#8203; '_&#8203; \\&#8203; /&#8203; _&#8203; \\&#8203; '__/&#8203; __|",
