@@ -21,7 +21,7 @@ contract EVMRender {
                 bytes(
                     abi.encodePacked(
                         '<?xml version="1.0" encoding="UTF-8"?>',
-                        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.logo { fill: white; font-family: mono; font-size: 8px; white-space: pre; } .base { fill: white; font-family: mono; font-size: 8px; background: white }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="logo" xml:space="preserve">',
+                        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.logo { fill: white; font-family: \'Courier New\', monospace; font-size: 8px; white-space: pre; } .base { fill: white; font-family: \'Courier New\', monospace; font-size: 8px; background: white }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="logo" xml:space="preserve">',
                         "  _____   ___ __ ___        _ __ _   _ _ __  _ __   ___ _ __ ___ ",
                         '</text><text x="10" y="30" class="logo" xml:space="preserve">',
                         " / _ \\ \\ / / '_ ' _ \\ _____| '__| | | | '_ \\| '_ \\ / _ \\ '__/ __|",
