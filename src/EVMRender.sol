@@ -4,15 +4,19 @@ pragma solidity ^0.8.16;
 import "./utils/Base64.sol";
 
 contract EVMRender {
+    bytes16 private constant HEX_DIGITS = "0123456789abcdef";
+
     string[] internal solutionTypes = ["Solidity", "Yul", "Vyper", "Huff", "Bytecode"];
     string[] internal optimizedFors = ["Gas", "Size"];
 
     function render(
+        uint256 id,
         string memory levelName,
         uint256 gas,
         uint256 size,
         uint256 solutionType,
         uint256 optimizedFor,
+        bytes32 bytecode_hash,
         string memory userName
     ) public view returns (string memory) {
         bytes memory image = abi.encodePacked(
@@ -29,24 +33,29 @@ contract EVMRender {
                         "|  __/\\ V /| | | | | |_____| |  | |_| | | | | | | |  __/ |  \\__ \\",
                         '</text><text x="10" y="50" class="logo" xml:space="preserve">',
                         " \\___| \\_/ |_| |_| |_|     |_|   \\__,_|_| |_|_| |_|\\___|_|  |___/",
-                        '</text><text x="30" y="90" class="base">',
+                        '</text><text x="20" y="90" class="base">',
                         "Username: ",
                         userName,
-                        '</text><text x="30" y="110" class="base">',
+                        '</text><text x="20" y="110" class="base">',
                         "Level: ",
                         levelName,
-                        '</text><text x="30" y="130" class="base">',
+                        '</text><text x="20" y="130" class="base">',
                         "Size: ",
                         toString(size),
-                        '</text><text x="30" y="150" class="base">',
+                        '</text><text x="20" y="150" class="base">',
                         "Gas: ",
                         toString(gas),
-                        '</text><text x="30" y="170" class="base">',
+                        '</text><text x="20" y="170" class="base">',
                         "Optimized For: ",
                         optimizedFors[optimizedFor],
-                        '</text><text x="30" y="190" class="base">',
+                        '</text><text x="20" y="190" class="base">',
                         "Solution Type: ",
                         solutionTypes[solutionType],
+                        '</text><text x="20" y="210" class="base">',
+                        "Bytecode Hash (SHA256): ",
+                        "</text>",
+                        '<text x="20" y="230" class="base">', // Start a new line
+                        toHexString(uint256(bytecode_hash), 32),
                         "</text>",
                         "</svg>"
                     )
@@ -59,7 +68,9 @@ contract EVMRender {
                 Base64.encode(
                     bytes(
                         abi.encodePacked(
-                            '{"name":"evm-runners", "image":"',
+                            '{"name":"evm-runners #',
+                            toString(id),
+                            '", "image":"',
                             image,
                             unicode'", "description": "This is a submission certificate for evm-runners."}'
                         )
@@ -87,6 +98,24 @@ contract EVMRender {
             digits -= 1;
             buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
             value /= 10;
+        }
+        return string(buffer);
+    }
+
+    /**
+     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.
+     */
+    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
+        uint256 localValue = value;
+        bytes memory buffer = new bytes(2 * length + 2);
+        buffer[0] = "0";
+        buffer[1] = "x";
+        for (uint256 i = 2 * length + 1; i > 1; --i) {
+            buffer[i] = HEX_DIGITS[localValue & 0xf];
+            localValue >>= 4;
+        }
+        if (localValue != 0) {
+            return "Insufficient length";
         }
         return string(buffer);
     }

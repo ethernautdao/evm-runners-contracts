@@ -43,6 +43,7 @@ contract EvmrTest is Test {
     function testTokenURI() public {
         _submit(100, 50);
 
+        // inspect SVG by decoding returned base64
         evmr.tokenURI(1);
     }
 
@@ -56,7 +57,8 @@ contract EvmrTest is Test {
             solutionType: 1,
             optimized_for: 1,
             submitted_at: 1,
-            user_name: "user1"
+            bytecode_hash: hex"f07390a96f8c90d4a560a80882a492fcf2b4b55e2c18e5f9234fe7fd29637e7c",
+            user_name: "alice"
         });
 
         // submit struct

@@ -6,11 +6,13 @@ import "solady/src/auth/OwnableRoles.sol";
 
 interface IRenderer {
     function render(
+        uint256 id,
         string memory levelName,
         uint256 gas,
         uint256 size,
         uint256 solutionType,
         uint256 optimizedFor,
+        bytes32 bytecode_hash,
         string memory userName
     ) external view returns (string memory);
 }
@@ -31,6 +33,7 @@ contract EVMR is ERC721, OwnableRoles {
         uint8 solutionType; // 0 solidity, 1 yul, 2 vyper, 3 huff, 4 bytecode
         uint8 optimized_for; // 0 gas, 1 size
         uint64 submitted_at;
+        bytes32 bytecode_hash; // sha256 hash of the submitted bytecode
         string user_name;
     }
 
@@ -87,11 +90,13 @@ contract EVMR is ERC721, OwnableRoles {
 
         return (
             renderer.render(
+                tokenId,
                 levelIdToName[idToSubmission[tokenId].level_id],
                 idToSubmission[tokenId].gas,
                 idToSubmission[tokenId].size,
                 idToSubmission[tokenId].solutionType,
                 idToSubmission[tokenId].optimized_for,
+                idToSubmission[tokenId].bytecode_hash,
                 idToSubmission[tokenId].user_name
             )
         );
