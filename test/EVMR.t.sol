@@ -6,6 +6,8 @@ import {EVMR} from "../src/EVMR.sol";
 import {EVMRender} from "../src/EVMRender.sol";
 
 contract EvmrTest is Test {
+    event Transfer(address indexed from, address indexed to, uint256 indexed id);
+
     EVMR public evmr;
     EVMRender public evmrender;
 
@@ -19,10 +21,19 @@ contract EvmrTest is Test {
         evmr.setLevelName(1, "Average");
     }
 
-    function testSubmit() public {
-        _submit(100, 50);
+    function testSubmitSameID() public {
+        // should mint one NFT
+        vm.expectEmit(true, true, true, false);
+        emit Transfer(address(0), address(this), 1);
+        _submit(100, 50, 1);
 
-        _submit(50, 50);
+        // should not mint another NFT, but updates its submission
+        _submit(50, 50, 1);
+
+        // should mint another NFT
+        vm.expectEmit(true, true, true, false);
+        emit Transfer(address(0), address(this), 2);
+        _submit(100, 50, 2);
     }
 
     function testSetLevelName() public {
@@ -41,16 +52,16 @@ contract EvmrTest is Test {
     }
 
     function testTokenURI() public {
-        _submit(100, 50);
+        _submit(100, 50, 1);
 
         // inspect SVG by decoding returned base64
         evmr.tokenURI(1);
     }
 
-    function _submit(uint32 gas, uint32 size) internal {
+    function _submit(uint32 gas, uint32 size, uint64 id) internal {
         // declare submission struct with random fields except gas and size
         EVMR.Submission memory newSubmission = EVMR.Submission({
-            id: 1,
+            id: id,
             level_id: 1,
             gas: gas,
             size: size,
